@@ -21,14 +21,16 @@
  */
 #include <assert.h>
 #include <inttypes.h>
+#ifndef _WINDOWS
 #include <netinet/in.h>
 #include <pthread.h>
+#include <sys/time.h>
+#include <sys/socket.h>
+#endif
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/socket.h>
-#include <sys/time.h>
 #include "khash.h"
 #include "quicly.h"
 #include "quicly/sentmap.h"
@@ -345,6 +347,7 @@ static inline uint8_t get_epoch(uint8_t first_byte)
         return QUICLY_EPOCH_0RTT;
     default:
         assert(!"FIXME");
+        return 0;
     }
 }
 
@@ -854,6 +857,17 @@ quicly_stream_t *quicly_get_stream(quicly_conn_t *conn, quicly_stream_id_t strea
     if (iter != kh_end(conn->streams))
         return kh_val(conn->streams, iter);
     return NULL;
+}
+
+size_t quicly_foreach_stream(quicly_conn_t *conn, void* data,
+    void (*visitor)(quicly_stream_t* stream, size_t *i, void* data))
+{
+    quicly_stream_t *stream;
+    size_t i=0;
+    kh_foreach_value(conn->streams, stream, {
+        visitor(stream, &i, data);
+    });
+    return i;
 }
 
 ptls_t *quicly_get_tls(quicly_conn_t *conn)

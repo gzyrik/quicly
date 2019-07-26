@@ -19,7 +19,9 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
+#ifndef _WINDOWS
 #include <sys/time.h>
+#endif
 #include "quicly/defaults.h"
 
 /* profile that employs IETF specified values */

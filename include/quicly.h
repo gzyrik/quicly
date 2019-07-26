@@ -22,6 +22,11 @@
 #ifndef quicly_h
 #define quicly_h
 
+#ifdef _WINDOWS
+#include <ws2tcpip.h>
+#else
+#include <sys/socket.h>
+#endif
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -29,7 +34,6 @@ extern "C" {
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/socket.h>
 #include <sys/types.h>
 #include "picotls.h"
 #include "quicly/constants.h"
@@ -880,6 +884,9 @@ quicly_stream_id_t quicly_get_ingress_max_streams(quicly_conn_t *conn, int uni);
  *
  */
 quicly_stream_t *quicly_get_stream(quicly_conn_t *conn, quicly_stream_id_t stream_id);
+size_t quicly_foreach_stream(quicly_conn_t *conn, void* data,
+    void (*visitor)(quicly_stream_t* stream, size_t *i, void* data));
+
 /**
  *
  */

@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
+struct sockaddr;
 struct sockaddr_storage;
 typedef uint64_t quicstm_t;
 typedef uint16_t quiconn_t;
@@ -20,15 +21,15 @@ typedef struct {
 } quicarg_t;
 
 int         quic_init       (quicarg_t* arg);
-int64_t     quic_timeout    (quiconn_t connId[], size_t num_id);
 
-quiconn_t   quic_connect    (const struct sockaddr_storage* addr, const char *server_name);
-quiconn_t   quic_accept     (const struct sockaddr_storage* addr, quicpkt_t *pkt);
+quiconn_t   quic_connect    (const struct sockaddr* addr, const char *server_name);
+quiconn_t   quic_accept     (const struct sockaddr* addr, quicpkt_t *pkt);
 void        quic_close      (quiconn_t connId, int err);
+int64_t     quic_timeout    (quiconn_t connId[], size_t num_id);
 
 int         quic_encode     (quiconn_t connId, quicbuf_t buf[256], struct sockaddr_storage* addr);
 int         quic_decode     (quicpkt_t *pkt, const quicbuf_t *buf);
-int         quic_is_target  (quiconn_t connId, const quicpkt_t *pkt, const struct sockaddr_storage* addr);
+int         quic_is_target  (quiconn_t connId, const quicpkt_t *pkt, const struct sockaddr* addr);
 int         quic_receive    (quiconn_t connId, quicpkt_t *pkt);
 
 quicstm_t   quic_open       (quiconn_t connId, int unidirectional);

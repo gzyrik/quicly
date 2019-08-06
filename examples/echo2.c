@@ -16,10 +16,12 @@
 typedef HANDLE pthread_t;
 #else
 #include <pthread.h>
+#include <arpa/inet.h>
 #include <netdb.h>
 #include <sys/select.h>
 #include <unistd.h>
 #include <sys/socket.h>
+#define closesocket(s) close(s)
 #endif
 static void PANIC(const char* format, ...)
 {
@@ -29,33 +31,22 @@ static void PANIC(const char* format, ...)
     va_end(argv);
     exit(-1);
 }
+static int _port = 4433;
 static int _isServer = 0;
+static int _logLevel = 0;
 quiconn_t _conns[256];
 static int is_server(void) { return _isServer; }
-static int resolve_address(struct sockaddr *sa, socklen_t *salen, const char *host,
-    const char *port, int family, int type, int proto)
-{
-    struct addrinfo hints, *res;
-    int err;
-
-    memset(&hints, 0, sizeof(hints));
-    hints.ai_family = family;
-    hints.ai_socktype = type;
-    hints.ai_protocol = proto;
-    hints.ai_flags = AI_ADDRCONFIG | AI_NUMERICSERV | AI_PASSIVE;
-    if ((err = getaddrinfo(host, port, &hints, &res)) != 0 || res == NULL) {
-        fprintf(stderr, "failed to resolve address:%s:%s:%s\n", host, port,
-            err != 0 ? gai_strerror(err) : "getaddrinfo returned NULL");
-        return -1;
+static int is_server_addr(const struct sockaddr_storage* addr) {
+    struct sockaddr_in*v4 = (struct sockaddr_in*)addr;
+    //struct sockaddr_in6*v6 = (struct sockaddr_in6*)addr;
+    switch (addr->ss_family) {
+    case AF_INET:
+        return (ntohl(v4->sin_addr.s_addr) >> 24) != 127 || ntohs(v4->sin_port) == _port;
+    case AF_INET6: //TODO
+        break;
     }
-
-    memcpy(sa, res->ai_addr, res->ai_addrlen);
-    *salen = res->ai_addrlen;
-
-    freeaddrinfo(res);
     return 0;
 }
-
 static void usage(const char *progname)
 {
     printf("Usage: %s [options] [host]\n"
@@ -68,6 +59,7 @@ static void usage(const char *progname)
         "  -p <number>              specifies the port number (default: 4433)\n"
         "  -E event-log-file        file to log events\n"
         "  -e log-file              file to log traffic secrets\n"
+        "  -L <number>              log level\n"
         "  -h                       prints this help\n"
         "\n"
         "When both `-c` and `-k` is specified, runs as a server.  Otherwise, runs as a\n"
@@ -76,13 +68,19 @@ static void usage(const char *progname)
     exit(0);
 }
 
-static void process_msg(const struct sockaddr_storage* addr, char* buf, size_t len)
+static void process_msg(const struct sockaddr* addr, char* buf, size_t len)
 {
     size_t off;
     quicstm_t strmId[1024];
     quicbuf_t data[1024];
     int packet_len,i;
 
+    {
+        char str[64];
+        struct sockaddr_in* ipv4 = (struct sockaddr_in*)addr;
+        inet_ntop(addr->sa_family, &ipv4->sin_addr, str, sizeof(str));
+        if (_logLevel > 10) printf("[%s]%d:SOCK %d bytes\n", str, ntohs(ipv4->sin_port), (int)len);
+    }
     /* split UDP datagram into multiple QUIC packets */
     for (off = 0; off < len; off += packet_len) {
         quicpkt_t decoded;
@@ -95,10 +93,14 @@ static void process_msg(const struct sockaddr_storage* addr, char* buf, size_t l
         for (i = 0; _conns[i] != 0; ++i)
             if (quic_is_target(_conns[i], &decoded, addr))
                 break;
-        if (_conns[i] != 0) /* let the current connection handle ingress packets */
+        if (_conns[i] != 0) {/* let the current connection handle ingress packets */
+            if (_logLevel > 9) printf("[%d]RECV %d bytes\n", _conns[i], (int)packet_len);
             quic_receive(_conns[i], &decoded);
-        else if (is_server()) /* assume that the packet is a new connection */
+        }
+        else if (is_server()) {/* assume that the packet is a new connection */
             _conns[i] = quic_accept(addr, &decoded);
+            if (_logLevel > 9) printf("[%d]ACPT %d bytes\n", _conns[i], (int)packet_len);
+        }
         else
             continue;
 
@@ -106,7 +108,7 @@ static void process_msg(const struct sockaddr_storage* addr, char* buf, size_t l
         int ret = quic_fetch (conndId, strmId, data);
         for (i=0;i<ret;++i) {
             if (is_server()) {
-                printf("[%d:%llu]:%-.*s", conndId, strmId[i], (int)data[i].len, data[i].base);
+                printf("[%d]%llu:%-.*s", conndId, strmId[i], (int)data[i].len, data[i].base);
                 quic_write(conndId, strmId[i], &data[i]);
             }
             else {
@@ -141,19 +143,29 @@ static int send_one(int fd, void *buf, int num, struct sockaddr_storage *sa)
 static void* forward_stdin(void* p)
 {
     char buf[4096];
+    int fd;
 
+    if (_logLevel > 5) {
+        struct sockaddr_in* ipv4 = (struct sockaddr_in*)p;
+        inet_ntop(ipv4->sin_family, &ipv4->sin_addr, buf, sizeof(buf));
+        printf("local addr = %s:%d\n", buf, ntohs(ipv4->sin_port));
+    }
+
+    if ((fd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
+        PANIC("socket(2):%s\n", strerror(errno));
     while (_conns[0]) {
         char* ret = fgets(buf, sizeof(buf), stdin);
         if (ret) { /* write data to send buffer */
-            quicbuf_t cbuf = { buf, strlen(ret) };
-            quic_write(_conns[0], 0, &cbuf);
+            send_one(fd, buf, strlen(ret), (struct sockaddr_storage*)p);
         }
     }
+    closesocket(fd);
     return NULL;
 }
 
 static void run_loop(int fd)
 {
+    int ret;
     size_t i;
     while (1) {
         /* wait for sockets to become readable, or some event in the QUIC stack to fire */
@@ -173,21 +185,27 @@ static void run_loop(int fd)
             char buf[1500];
             struct sockaddr_storage sa;
             socklen_t salen = sizeof(sa);
-            int ret = recvfrom(fd, buf, sizeof(buf), 0, (struct sockaddr*)&sa, &salen);
-            if (ret > 0) process_msg(&sa, buf, ret);
+            if ((ret = recvfrom(fd, buf, sizeof(buf), 0, (struct sockaddr*)&sa, &salen)) > 0) {
+                if (is_server() || is_server_addr(&sa))
+                    process_msg((struct sockaddr*)&sa, buf, ret);
+                else {
+                    quicbuf_t cbuf = {buf, ret};
+                    quic_write(_conns[0], 0, &cbuf);
+                }
+            }
         }
         /* send QUIC packets, if any */
         for (i = 0; _conns[i] != 0; ++i) {
             quicbuf_t vbuf[256];
             struct sockaddr_storage addr;
-            int ret = quic_encode(_conns[i], vbuf, &addr);
-            if (ret < 0) {
+            if ((ret = quic_encode(_conns[i], vbuf, &addr)) < 0) {
                 if (!is_server()) return;
                 printf("[%d] closed\n", _conns[i]);
                 memmove(_conns + i, _conns + i + 1, sizeof(_conns) - sizeof(_conns[0]) * (i + 1));
                 --i;
             }
             else if (ret > 0) {
+                if (_logLevel > 5) printf("[%d] send %d pkts\n", _conns[i], ret);
                 for (int j=0;j<ret;++j)
                     send_one(fd, vbuf[j].base, vbuf[j].len, &addr);
             }
@@ -195,20 +213,36 @@ static void run_loop(int fd)
     }
 }
 /* resolve command line options and arguments */
-static void parse(int argc, char **argv, char** host, char** port, quicarg_t *quic_arg)
+static const char* parse(int argc, char **argv, struct sockaddr_storage* sa, quicarg_t *quic_arg)
 {
     int ch;
-    *host = "127.0.0.1", *port = "4433";
+    struct sockaddr_in* ipv4 = (struct sockaddr_in*)sa;
+    ipv4->sin_family = AF_INET;
+    ipv4->sin_addr.s_addr = inet_addr ("127.0.0.1");
     memset(quic_arg, 0, sizeof(*quic_arg));
-    while ((ch = getopt(argc, argv, "C:c:k:p:E:e:t:hs")) != -1) {
+    while ((ch = getopt(argc, argv, "C:c:k:p:E:e:L:t:hs")) != -1) {
         switch (ch) {
-        case 'C': quic_arg->cid_key = optarg; break;
-        case 'c': quic_arg->cert_pem_file = optarg; break; /* load certificate chain */
-        case 'k': quic_arg->key_pem_file = optarg; break; /* load private key */
-        case 't': quic_arg->ticket_file = optarg; break;
-        case 'p': *port = optarg; break; /* port */
-        case 's': _isServer = 1; break;
-        case 'h': usage(argv[0]); break; /* help */
+        case 'C':
+            quic_arg->cid_key = optarg;
+            break;
+        case 'c': /* load certificate chain */
+            quic_arg->cert_pem_file = optarg;
+            break; 
+        case 'k': /* load private key */
+            quic_arg->key_pem_file = optarg;
+            break; 
+        case 't':
+            quic_arg->ticket_file = optarg;
+            break;
+        case 'p': /* port */
+            _port = atoi(optarg);
+            break; 
+        case 's':
+            _isServer = 1;
+            ipv4->sin_addr.s_addr = htonl (INADDR_ANY);
+            break;
+        case 'h':/* help */
+            usage(argv[0]); break;
         case 'e':
             quic_arg->secret_log = fopen(optarg, "w+"); 
             break;
@@ -216,34 +250,34 @@ static void parse(int argc, char **argv, char** host, char** port, quicarg_t *qu
             quic_arg->event_log = fopen(optarg, "w+"); 
             quic_arg->event_mask = UINT64_MAX;
             break;
+        case 'L':
+            _logLevel = atoi(optarg);
+            break;
         default: exit(1);
         }
     }
-    argc -= optind;
-    argv += optind;
-    if (argc != 0) *host = *argv++;
+    if (argc > optind && !_isServer)
+        ipv4->sin_addr.s_addr = inet_addr (argv[optind]);
+    ipv4->sin_port = htons (_port);
+    return argc > optind ? argv[optind] : "localhost";
 }
 int main(int argc, char **argv)
 {
-    char *host;
-    struct sockaddr_storage sa;
-    socklen_t salen;
+    int fd;
+    const char* host;
+    pthread_t thread;
+    struct sockaddr_storage sa={0};
 #ifdef _WINDOWS
     WSADATA wsd;
     WSAStartup(MAKEWORD(2, 2), &wsd);
 #endif
     {
-        char *port;
         quicarg_t quic_arg;
-        parse(argc, argv,  &host, &port, &quic_arg);
-        if (resolve_address((struct sockaddr *)&sa, &salen, host, port, AF_INET, SOCK_DGRAM, 0) != 0)
-            exit(1);
+        host = parse(argc, argv, &sa, &quic_arg);
         if (quic_init(&quic_arg) < 0)
             PANIC("quic_init:%d\n", errno);
     }
 
-    int fd;
-    pthread_t thread;
     /* open socket, on the specified port (as a server), or on any port (as a client) */
     if ((fd = socket(sa.ss_family, SOCK_DGRAM, IPPROTO_UDP)) == -1) 
         PANIC("socket(2):%s\n",strerror(errno));
@@ -251,21 +285,36 @@ int main(int argc, char **argv)
     if (is_server()) {
         int reuseaddr = 1;
         setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char*)&reuseaddr, sizeof(reuseaddr));
-        if (bind(fd, (struct sockaddr *)&sa, salen) != 0)
-            PANIC("bind(2):%s\n", strerror(errno));
+        if (bind(fd, (struct sockaddr *)&sa, socklen(&sa)) != 0)
+            PANIC("server bind:%s\n", strerror(errno));
     }
     else {
+        socklen_t salen = 0;
         /* initiate a connection, and open a stream */
-        _conns[0] = quic_connect(&sa, host);
+        _conns[0] = quic_connect((struct sockaddr*)&sa, host);
         if (!_conns[0])
             PANIC("quicly_connect:%d\n", errno);
 
         if (quic_open(_conns[0], 0) != 0)
             PANIC("first stream must 0\n");
+
+        if (sa.ss_family == AF_INET) {
+            struct sockaddr_in* ipv4 = (struct sockaddr_in*)&sa;
+            ipv4->sin_addr.s_addr = inet_addr ("127.0.0.1");
+            ipv4->sin_port = 0;
+            salen = sizeof(*ipv4);
+        }
+        if (bind(fd, (struct sockaddr *)&sa, salen) != 0)
+            PANIC("client bind:%s\n", strerror(errno));
+
+        salen = sizeof(sa);
+        if (getsockname(fd, (struct sockaddr *)&sa, &salen) != 0)
+            PANIC("getsockname:%s\n", strerror(errno));
+
 #ifdef _WINDOWS
-        thread = (pthread_t)_beginthreadex (NULL, 0, forward_stdin, NULL, 0 , NULL);
+        thread = (pthread_t)_beginthreadex (NULL, 0, forward_stdin, &sa, 0 , NULL);
 #else
-        pthread_create (&thread, NULL, forward_stdin, NULL);
+        pthread_create (&thread, NULL, forward_stdin, &sa);
 #endif
     }
     run_loop(fd);
@@ -278,5 +327,6 @@ int main(int argc, char **argv)
         pthread_join(thread, NULL);
 #endif
     }
+    closesocket(fd);
     return 0;
 }

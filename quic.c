@@ -310,14 +310,14 @@ int64_t quic_timeout (quiconn_t connId[], size_t num_id)
     }
     if (now >= first_timeout)
         return 0;
-    if (first_timeout >= now + 1000)
-        return 1000;
-    else
-        return first_timeout - now;
+    first_timeout -= now;
+    if (first_timeout > _ctx.transport_params.idle_timeout)
+        return _ctx.transport_params.idle_timeout;
+    return first_timeout;
 }
-static socklen_t socklen(const struct sockaddr_storage* addr)
+static socklen_t socklen(const struct sockaddr* addr)
 {
-    switch(addr->ss_family) {
+    switch(addr->sa_family) {
     case AF_INET:
         return sizeof(struct sockaddr_in);
     case AF_INET6:
@@ -326,25 +326,27 @@ static socklen_t socklen(const struct sockaddr_storage* addr)
         return 0;
     }
 }
-int quic_is_target(quiconn_t connId, const quicpkt_t *pkt, const struct sockaddr_storage* addr)
+int quic_is_target(quiconn_t connId, const quicpkt_t *pkt, const struct sockaddr* addr)
 {
     return quicly_is_destination(_conns[connId], 
         (struct sockaddr*)addr, socklen(addr), (quicly_decoded_packet_t*)pkt);
 }
-quiconn_t quic_connect (const struct sockaddr_storage* addr, const char *server_name)
+quiconn_t quic_connect (const struct sockaddr* addr, const char *server_name)
 {
     quicly_conn_t *conn = NULL;
     if (quicly_connect(&conn, &_ctx, server_name,
             (struct sockaddr*)addr, socklen(addr), &_next_cid, &_hs_properties, &_resumed_transport_params) != 0) 
         return 0;
+    ++_next_cid.master_id;
     return add_conn(conn);
 }
-quiconn_t quic_accept (const struct sockaddr_storage* addr, quicpkt_t *pkt)
+quiconn_t quic_accept (const struct sockaddr* addr, quicpkt_t *pkt)
 {
     quicly_conn_t *conn = NULL;
     if (quicly_accept(&conn, &_ctx,(struct sockaddr*)addr, socklen(addr),
             (quicly_decoded_packet_t*)pkt, ptls_iovec_init(NULL, 0), &_next_cid, NULL) != 0)
         return 0;
+    ++_next_cid.master_id;
     return add_conn(conn);
 }
 void quic_close (quiconn_t connId, int err)

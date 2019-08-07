@@ -53,8 +53,10 @@ static void usage(const char *progname)
         "Options:\n"
         "  -C <cid-key>             CID encryption key (server-only). Randomly generated\n"
         "                           if omitted.\n"
-        "  -c <file>                specifies the certificate chain file (PEM format)\n"
-        "  -k <file>                specifies the private key file (PEM format)\n"
+        "  -c certificate-file\n"
+        "  -k key-file              specifies the credentials to be used for running the\n"
+        "                           server. If omitted, the command runs as a client.\n"
+        "  -V                       verify peer using the default certificates\n"
         "  -s session-file          file to load / store the session ticket\n"
         "  -p <number>              specifies the port number (default: 4433)\n"
         "  -E event-log-file        file to log events\n"
@@ -67,8 +69,27 @@ static void usage(const char *progname)
         progname);
     exit(0);
 }
-
-static void process_msg(const struct sockaddr* addr, char* buf, size_t len)
+static socklen_t socklen(const void* p)
+{
+    const struct sockaddr* addr = (const struct sockaddr*)p;
+    switch (addr->sa_family) {
+    case AF_INET:
+        return sizeof(struct sockaddr_in);
+    case AF_INET6:
+        return sizeof(struct sockaddr_in6);
+    default:
+        return 0;
+    }
+}
+static int send_one(int fd, void *buf, int num,  const void*sa)
+{
+    int ret;
+    if (num <= 0) return 0;
+    while ((ret = (int)sendto(fd, buf, num, 0, (const struct sockaddr*)sa, socklen(sa))) == -1 && errno == EINTR)
+        ;
+    return ret;
+}
+static void process_msg(int fd, struct sockaddr* addr, char* buf, size_t len)
 {
     size_t off;
     quicstm_t strmId[1024];
@@ -86,9 +107,11 @@ static void process_msg(const struct sockaddr* addr, char* buf, size_t len)
         quicpkt_t decoded;
         data[0].base = buf + off;
         data[0].len  = len - off;
-        packet_len = quic_decode(&decoded, data);
-        if (packet_len <= 0)
+        packet_len = quic_decode(&decoded, &data[0], addr);
+        if (packet_len <= 0){
+            send_one(fd, data[0].base, data[0].len, addr);
             return;
+        }
         /* find the corresponding connection (TODO handle version negotiation, rebinding, retry, etc.) */
         for (i = 0; _conns[i] != 0; ++i)
             if (quic_is_target(_conns[i], &decoded, addr))
@@ -98,7 +121,11 @@ static void process_msg(const struct sockaddr* addr, char* buf, size_t len)
             quic_receive(_conns[i], &decoded);
         }
         else if (is_server()) {/* assume that the packet is a new connection */
-            _conns[i] = quic_accept(addr, &decoded);
+            _conns[i] = quic_accept(addr, &decoded, &data[0]);
+            if (!_conns[i]) {
+                send_one(fd, data[0].base, data[0].len, addr);
+                continue;
+            }
             if (_logLevel > 9) printf("[%d]ACPT %d bytes\n", _conns[i], (int)packet_len);
         }
         else
@@ -120,25 +147,6 @@ static void process_msg(const struct sockaddr* addr, char* buf, size_t len)
         }
     }
 }
-static socklen_t socklen(const struct sockaddr_storage* addr)
-{
-    switch (addr->ss_family) {
-    case AF_INET:
-        return sizeof(struct sockaddr_in);
-    case AF_INET6:
-        return sizeof(struct sockaddr_in6);
-    default:
-        return 0;
-    }
-}
-static int send_one(int fd, void *buf, int num, struct sockaddr_storage *sa)
-{
-    int ret;
-    while ((ret = (int)sendto(fd, buf, num, 0, (struct sockaddr*)sa, socklen(sa))) == -1 && errno == EINTR)
-        ;
-    return ret;
-}
-
 /* read stdin, send the input to the active stream 0 */
 static void* forward_stdin(void* p)
 {
@@ -156,7 +164,7 @@ static void* forward_stdin(void* p)
     while (_conns[0]) {
         char* ret = fgets(buf, sizeof(buf), stdin);
         if (ret) { /* write data to send buffer */
-            send_one(fd, buf, strlen(ret), (struct sockaddr_storage*)p);
+            send_one(fd, buf, strlen(ret), p);
         }
     }
     closesocket(fd);
@@ -187,7 +195,7 @@ static void run_loop(int fd)
             socklen_t salen = sizeof(sa);
             if ((ret = recvfrom(fd, buf, sizeof(buf), 0, (struct sockaddr*)&sa, &salen)) > 0) {
                 if (is_server() || is_server_addr(&sa))
-                    process_msg((struct sockaddr*)&sa, buf, ret);
+                    process_msg(fd, (struct sockaddr*)&sa, buf, ret);
                 else {
                     quicbuf_t cbuf = {buf, ret};
                     quic_write(_conns[0], 0, &cbuf);
@@ -212,42 +220,47 @@ static void run_loop(int fd)
         }
     }
 }
+static FILE* open_log_file(const char* file)
+{
+    if (!strcmp(file, "stderr"))
+        return stderr;
+    else if (!strcmp(file, "stdout"))
+        return stdout;
+    return fopen(file, "w+");
+}
 /* resolve command line options and arguments */
 static const char* parse(int argc, char **argv, struct sockaddr_storage* sa, quicarg_t *quic_arg)
 {
     int ch;
-    struct sockaddr_in* ipv4 = (struct sockaddr_in*)sa;
-    ipv4->sin_family = AF_INET;
-    ipv4->sin_addr.s_addr = inet_addr ("127.0.0.1");
     memset(quic_arg, 0, sizeof(*quic_arg));
-    while ((ch = getopt(argc, argv, "C:c:k:p:E:e:L:t:hs")) != -1) {
+    sa->ss_family = AF_INET;
+    while ((ch = getopt(argc, argv, "C:c:k:p:E:e:L:t:hV")) != -1) {
         switch (ch) {
         case 'C':
             quic_arg->cid_key = optarg;
             break;
         case 'c': /* load certificate chain */
-            quic_arg->cert_pem_file = optarg;
+            quic_arg->cert_file = optarg;
             break; 
         case 'k': /* load private key */
-            quic_arg->key_pem_file = optarg;
+            quic_arg->key_file = optarg;
             break; 
         case 't':
             quic_arg->ticket_file = optarg;
             break;
+        case 'V':
+            quic_arg->verify_cert = 1;
+            break;
         case 'p': /* port */
             _port = atoi(optarg);
             break; 
-        case 's':
-            _isServer = 1;
-            ipv4->sin_addr.s_addr = htonl (INADDR_ANY);
-            break;
         case 'h':/* help */
             usage(argv[0]); break;
         case 'e':
-            quic_arg->secret_log = fopen(optarg, "w+"); 
+            quic_arg->secret_log = open_log_file(optarg);
             break;
         case 'E':
-            quic_arg->event_log = fopen(optarg, "w+"); 
+            quic_arg->event_log = open_log_file(optarg); 
             quic_arg->event_mask = UINT64_MAX;
             break;
         case 'L':
@@ -256,9 +269,18 @@ static const char* parse(int argc, char **argv, struct sockaddr_storage* sa, qui
         default: exit(1);
         }
     }
-    if (argc > optind && !_isServer)
-        ipv4->sin_addr.s_addr = inet_addr (argv[optind]);
-    ipv4->sin_port = htons (_port);
+    _isServer = (quic_arg->cert_file && quic_arg->key_file);
+    if (sa->ss_family == AF_INET) {
+        struct sockaddr_in* ipv4 = (struct sockaddr_in*)sa;
+        if (_isServer)
+            ipv4->sin_addr.s_addr = htonl (INADDR_ANY);
+        else 
+            ipv4->sin_addr.s_addr = inet_addr (argc > optind ? argv[optind] : "127.0.0.1");
+        ipv4->sin_port = htons (_port);
+    }
+    else if (sa->ss_family == AF_INET6) {
+        //TODO
+    }
     return argc > optind ? argv[optind] : "localhost";
 }
 int main(int argc, char **argv)
@@ -285,7 +307,7 @@ int main(int argc, char **argv)
     if (is_server()) {
         int reuseaddr = 1;
         setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char*)&reuseaddr, sizeof(reuseaddr));
-        if (bind(fd, (struct sockaddr *)&sa, socklen(&sa)) != 0)
+        if (bind(fd, (struct sockaddr*)&sa, socklen(&sa)) != 0)
             PANIC("server bind:%s\n", strerror(errno));
     }
     else {

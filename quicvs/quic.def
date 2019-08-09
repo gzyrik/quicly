@@ -1,7 +1,7 @@
 LIBRARY quic
 EXPORTS
 quic_init
-quic_timeout  
+quic_timeout_ms  
               
 quic_connect  
 quic_accept   
@@ -13,9 +13,14 @@ quic_decode
 quic_is_target     
 quic_receive  
 
-quic_open     
-quic_write
-quic_send_file
-quic_fetch    
-quic_shift    
-quic_reset   
+quic_open_stream     
+quic_request_stop
+
+quic_egress_write
+quic_egress_sendf
+quic_egress_states
+quic_egress_shutdown
+
+quic_ingress_fetch    
+quic_ingress_shift 
+quic_ingress_states

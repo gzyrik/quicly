@@ -305,7 +305,7 @@ static quicly_stream_t* get_strm(quiconn_t connId, quicstm_t strmId)
         return quicly_get_stream(_conns[connId], strmId);
     return NULL;
 }
-int64_t quic_timeout (quiconn_t connId[], size_t num_id)
+int64_t quic_timeout_ms (quiconn_t connId[], size_t num_id)
 {
     size_t i;
     int64_t conn_timeout, first_timeout = INT64_MAX, now = _ctx.now->cb(_ctx.now);
@@ -422,16 +422,26 @@ int quic_receive(quiconn_t connId, const quicpkt_t *pkt)
     return quicly_receive(_conns[connId], (quicly_decoded_packet_t*)pkt);
 }
 
-quicstm_t quic_open (quiconn_t connId, int unidirectional)
+quicstm_t quic_open_stream (quiconn_t connId, int unidirectional)
 {
     quicly_stream_t *stream = NULL;
     quicly_open_stream(_conns[connId], &stream, unidirectional);
     return stream ? stream->stream_id : -1;
 }
-int quic_write (quiconn_t connId, quicstm_t strmId, const quicbuf_t *buf)
+int quic_request_stop (quiconn_t connId, quicstm_t strmId, int err)
 {
     quicly_stream_t* stream = get_strm(connId, strmId); 
     if (!stream) return -1;
+    if (!quicly_stream_has_receive_side(quicly_is_client(stream->conn), stream->stream_id))
+        return -1;
+    quicly_request_stop(stream, QUICLY_ERROR_FROM_APPLICATION_ERROR_CODE(err));
+    return 0;
+}
+int quic_egress_write (quiconn_t connId, quicstm_t strmId, const quicbuf_t *buf)
+{
+    quicly_stream_t* stream = get_strm(connId, strmId); 
+    if (!stream) return -1;
+    if (!quicly_sendstate_is_open(&stream->sendstate)) return -1;
     return quicly_streambuf_egress_write(stream, buf->base, buf->len);
 }
 #ifdef _WINDOWS
@@ -460,7 +470,7 @@ static void discard_file_vec(quicly_sendbuf_vec_t *vec)
     close(fd);
 }
 
-int quic_send_file(quiconn_t connId, quicstm_t strmId, const char *filename)
+int quic_egress_sendf(quiconn_t connId, quicstm_t strmId, const char *filename)
 {
     static const quicly_streambuf_sendvec_callbacks_t send_file_callbacks = {flatten_file_vec, discard_file_vec};
     int fd;
@@ -482,6 +492,27 @@ int quic_send_file(quiconn_t connId, quicstm_t strmId, const char *filename)
     quicly_sendbuf_vec_t vec = {&send_file_callbacks, len, (void *)(intptr_t)fd};
     return quicly_streambuf_egress_write_vec(stream, &vec);
 }
+int quic_egress_states (quiconn_t connId, quicstm_t strmId, const uint64_t *max_stream_data)
+{
+    int state = 0;
+    quicly_stream_t* stream = get_strm(connId, strmId);
+    if (!stream) return 0;
+    if (quicly_sendstate_transfer_complete(&stream->sendstate))
+        state |= QUIC_EGRESS_FINAL;
+    else if (quicly_sendstate_is_open(&stream->sendstate))
+        state |= QUIC_EGRESS_OPEN;
+    if (!quicly_sendstate_can_send(&stream->sendstate, max_stream_data))
+        state |= QUIC_EGRESS_BLOCK;
+    return 0;
+}
+int quic_egress_shutdown(quiconn_t connId, quicstm_t strmId)
+{
+    quicly_stream_t* stream = get_strm(connId, strmId); 
+    if (!stream) return -1;
+    if (!quicly_sendstate_is_open(&stream->sendstate)) return -1;
+
+    return quicly_streambuf_egress_shutdown(stream);
+}
 
 struct myfetch {
     quicstm_t *strm;
@@ -498,13 +529,13 @@ static void fetch_vbuf(quicly_stream_t* stream, size_t* p, void* f)
         mf->vbuf[i] = *v;
     }
 }
-int quic_fetch (quiconn_t connId, quicstm_t strmId[1024], quicbuf_t vbuf[1024])
+int quic_ingress_fetch (quiconn_t connId, quicstm_t strmId[1024], quicbuf_t vbuf[1024])
 {
     struct myfetch mf = { strmId , vbuf };
     quicly_conn_t *conn = _conns[connId];
     return (int)quicly_foreach_stream(conn, &mf, fetch_vbuf);
 }
-int quic_shift (quiconn_t connId, quicstm_t strmId, size_t off)
+int quic_ingress_shift (quiconn_t connId, quicstm_t strmId, size_t off)
 {
     quicbuf_t* vbuf;
     quicly_stream_t* stream = get_strm(connId, strmId);
@@ -516,14 +547,15 @@ int quic_shift (quiconn_t connId, quicstm_t strmId, size_t off)
     quicly_streambuf_ingress_shift(stream, off);
     return vbuf->len -= off;
 }
-int quic_reset (quiconn_t connId, quicstm_t strmId, int err)
+int quic_ingress_states (quiconn_t connId, quicstm_t strmId)
 {
-    quicly_stream_t* stream = get_strm(connId, strmId); 
-    if (!stream) return -1;
-    quicly_request_stop(stream, err);
+    int state = 0;
+    quicly_stream_t* stream = get_strm(connId, strmId);
+    if (!stream) return 0;
+    if (quicly_recvstate_transfer_complete(&stream->recvstate))
+        state |= QUIC_INGRESS_FINAL;
     return 0;
 }
-
 int quic_encode (quiconn_t connId, quicbuf_t vbuf[256], struct sockaddr_storage* addr)
 {
     struct sockaddr* sa;

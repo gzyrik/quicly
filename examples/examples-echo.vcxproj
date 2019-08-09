@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\examples\echo2.c" />
+    <ClCompile Include="echo2.c" />
     <ClCompile Include="getopt\getopt.c" />
   </ItemGroup>
   <ItemGroup>

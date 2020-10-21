@@ -19,39 +19,30 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\deps\picotls\lib\openssl.c" />
-    <ClCompile Include="..\deps\picotls\lib\pembase64.c" />
-    <ClCompile Include="..\deps\picotls\lib\picotls.c" />
-    <ClCompile Include="..\deps\picotls\picotlsvs\picotls\wintimeofday.c" />
-    <ClCompile Include="..\lib\cc-reno.c" />
-    <ClCompile Include="..\lib\defaults.c" />
-    <ClCompile Include="..\lib\frame.c" />
-    <ClCompile Include="..\lib\quicly.c" />
-    <ClCompile Include="..\lib\ranges.c" />
-    <ClCompile Include="..\lib\recvstate.c" />
-    <ClCompile Include="..\lib\sendstate.c" />
-    <ClCompile Include="..\lib\sentmap.c" />
-    <ClCompile Include="..\lib\streambuf.c" />
-    <ClCompile Include="..\quic.c" />
+    <ClCompile Include="..\examples\echo2.c" />
+    <ClCompile Include="getopt\getopt.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\quic.h" />
+    <ClInclude Include="getopt\getopt.h" />
+    <ClInclude Include="getopt\tailor.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="quic.def" />
+    <ProjectReference Include="..\quicvs\quic.vcxproj">
+      <Project>{5d4da3a3-7851-4cae-ae4f-c421a2c8c440}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{5D4DA3A3-7851-4CAE-AE4F-C421A2C8C440}</ProjectGuid>
+    <ProjectGuid>{A9EE7077-2048-42B1-83C3-E2FF0C90920C}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>cifra</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -97,12 +88,13 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_WINDOWS;PICOTLS_USE_OPENSSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\deps\klib;$(ProjectDir)..\deps\picotls\include;$(ProjectDir)..\include;$(SolutionDir)..\openssl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\deps\klib;$(ProjectDir)..\deps\picotls\include;$(ProjectDir)..\include;$(ProjectDir)getopt;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <ModuleDefinitionFile>quic.def</ModuleDefinitionFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\openssl\lib</AdditionalLibraryDirectories>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
+      <AdditionalDependencies>Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

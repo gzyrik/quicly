@@ -35,7 +35,7 @@ static void PANIC(const char* format, ...)
     va_end(argv);
     exit(-1);
 }
-static int _port = 443;
+static int _port = 4433;
 static int _isServer = 0;
 static int _logLevel = 0;
 quiconn_t _conns[256];
@@ -119,9 +119,10 @@ static int addr_str(struct sockaddr* addr, char buf[], size_t buflen)
 static void process_msg(int fd, struct sockaddr* addr, char* buf, size_t len)
 {
     size_t off;
+    quiconn_t conndId;
     quicstm_t strmId[1024];
     quicbuf_t data[1024];
-    int packet_len,i;
+    int packet_len,i, ret;
 
     if (_logLevel > 8) {
         char buf[128];
@@ -139,11 +140,12 @@ static void process_msg(int fd, struct sockaddr* addr, char* buf, size_t len)
             return;
         }
         /* find the corresponding connection (TODO handle version negotiation, rebinding, retry, etc.) */
-        for (i = 0; _conns[i] != 0; ++i)
+        for (i = 0; _conns[i] != 0; ++i) {
             if (quic_is_target(_conns[i], &decoded, addr))
                 break;
+        }
         if (_conns[i] != 0) {/* let the current connection handle ingress packets */
-            quic_receive(_conns[i], &decoded);
+            quic_received(_conns[i], &decoded);
         }
         else if (is_server()) {/* assume that the packet is a new connection */
             _conns[i] = quic_accept(addr, &decoded, &data[0]);
@@ -152,12 +154,13 @@ static void process_msg(int fd, struct sockaddr* addr, char* buf, size_t len)
                 continue;
             }
         }
-        else
+        else {
+            printf("** WARN: unknown pkt\n");
             continue;
-
-        quiconn_t conndId = _conns[i];
+        }
+        conndId = _conns[i];
         if (_logLevel > 8) printf("[%d]< %d bytes\n", conndId, (int)packet_len);
-        int ret = quic_ingress_fetch (conndId, strmId, data);
+        ret = quic_ingress_fetch (conndId, strmId, data);
         for (i=0;i<ret;++i) {
             if (is_server()) {
                 printf("[%d]%llu:%-.*s", conndId, strmId[i], (int)data[i].len, data[i].base);
@@ -220,7 +223,7 @@ static void run_loop(int fd)
             if ((ret = recvfrom(fd, buf, sizeof(buf), 0, (struct sockaddr*)&sa, &salen)) > 0) {
                 if (is_server() || is_server_addr(&sa))
                     process_msg(fd, (struct sockaddr*)&sa, buf, ret);
-                else {
+                else {/* read from stdin */
                     quicbuf_t cbuf = {buf, ret};
                     quic_egress_write(_conns[0], 0, &cbuf);
                 }
@@ -231,8 +234,8 @@ static void run_loop(int fd)
             quicbuf_t vbuf[256];
             struct sockaddr_storage addr;
             if ((ret = quic_encode(_conns[i], vbuf, &addr)) < 0) {
-                if (!is_server()) return;
                 printf("[%d] closed\n", _conns[i]);
+                if (!is_server()) return;
                 memmove(_conns + i, _conns + i + 1, sizeof(_conns) - sizeof(_conns[0]) * (i + 1));
                 --i;
             }
@@ -346,10 +349,12 @@ int main(int argc, char **argv)
     /* open socket, on the specified port (as a server), or on any port (as a client) */
     if ((fd = socket(sa.ss_family, SOCK_DGRAM, IPPROTO_UDP)) == -1) 
         PANIC("socket(2):%s\n",strerror(errno));
-
-    if (is_server()) {
+    else {
         int reuseaddr = 1;
         setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char*)&reuseaddr, sizeof(reuseaddr));
+    }
+
+    if (is_server()) {
         if (bind(fd, (struct sockaddr*)&sa, socklen(&sa)) != 0)
             PANIC("server bind:%s\n", strerror(errno));
     }

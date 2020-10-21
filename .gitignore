@@ -12,3 +12,4 @@ xcuserdata
 *.xccheckout
 tmp/
 quicvs/.vs
+.xmake

@@ -1,0 +1,5 @@
+target("echo")
+  add_deps("quic")
+  set_kind("binary")
+  add_files("echo2.c")
+  add_links("ssl", "crypto")

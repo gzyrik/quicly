@@ -1,0 +1,323 @@
+{"type":"accept", "time":1566536674173, "conn":0, "dcid":"2fb426b8b76e13b3", "scid":""}
+{"type":"crypto-decrypt", "time":1566536674173, "conn":0, "pn":0, "len":1244}
+{"type":"quictrace-recv", "time":1566536674173, "conn":0, "pn":0, "len":1244, "encryptionLevel":0}
+{"type":"stream-receive", "time":1566536674173, "conn":0, "stream-id":-1, "off":0, "len":268}
+{"type":"crypto-update-secret", "time":1566536674173, "conn":0, "is-enc":1, "epoch":2}
+{"type":"crypto-update-secret", "time":1566536674173, "conn":0, "is-enc":0, "epoch":2}
+{"type":"crypto-update-secret", "time":1566536674173, "conn":0, "is-enc":1, "epoch":3}
+{"type":"crypto-handshake", "time":1566536674173, "conn":0, "tls-error":0}
+{"type":"send", "time":1566536674196, "conn":0, "state":1}
+{"type":"packet-prepare", "time":1566536674196, "conn":0, "first-octet":192, "dcid":""}
+{"type":"stream-send", "time":1566536674196, "conn":0, "stream-id":-1, "off":0, "len":155, "fin":0}
+{"type":"quictrace-send-stream", "time":1566536674196, "conn":0, "stream-id":-1, "off":0, "len":155, "fin":0}
+{"type":"packet-commit", "time":1566536674196, "conn":0, "pn":0, "len":200, "ack-only":0}
+{"type":"quictrace-sent", "time":1566536674196, "conn":0, "pn":0, "len":200, "packet-type":0}
+{"type":"packet-prepare", "time":1566536674196, "conn":0, "first-octet":224, "dcid":""}
+{"type":"stream-send", "time":1566536674196, "conn":0, "stream-id":-3, "off":0, "len":1041, "fin":0}
+{"type":"quictrace-send-stream", "time":1566536674196, "conn":0, "stream-id":-3, "off":0, "len":1041, "fin":0}
+{"type":"packet-commit", "time":1566536674196, "conn":0, "pn":1, "len":1080, "ack-only":0}
+{"type":"quictrace-sent", "time":1566536674196, "conn":0, "pn":1, "len":1280, "packet-type":2}
+{"type":"packet-prepare", "time":1566536674196, "conn":0, "first-octet":224, "dcid":""}
+{"type":"stream-send", "time":1566536674196, "conn":0, "stream-id":-3, "off":1041, "len":253, "fin":0}
+{"type":"quictrace-send-stream", "time":1566536674196, "conn":0, "stream-id":-3, "off":1041, "len":253, "fin":0}
+{"type":"packet-commit", "time":1566536674196, "conn":0, "pn":2, "len":293, "ack-only":0}
+{"type":"quictrace-sent", "time":1566536674196, "conn":0, "pn":2, "len":293, "packet-type":2}
+{"type":"receive", "time":1566536674197, "conn":0, "dcid":"09676c6e664898a4", "scid":"", "len":40, "first-octet":229}
+{"type":"crypto-decrypt", "time":1566536674197, "conn":0, "pn":1, "len":5}
+{"type":"quictrace-recv", "time":1566536674197, "conn":0, "pn":1, "len":5, "encryptionLevel":2}
+{"type":"stream-lost", "time":1566536674197, "conn":0, "stream-id":-1, "off":0, "len":155}
+{"type":"quictrace-recv-ack", "time":1566536674197, "conn":0, "ack-block-begin":1, "ack-block-end":1}
+{"type":"packet-acked", "time":1566536674197, "conn":0, "pn":1, "newly-acked":1}
+{"type":"stream-acked", "time":1566536674197, "conn":0, "stream-id":-3, "off":0, "len":1041}
+{"type":"quictrace-recv-ack", "time":1566536674197, "conn":0, "ack-delay":0}
+{"type":"quictrace-cc-ack", "time":1566536674197, "conn":0, "min-rtt":1, "smoothed-rtt":1, "latest-rtt":1, "cwnd":13880, "inflight":293}
+{"type":"cc-ack-received", "time":1566536674197, "conn":0, "pn":1, "acked-packets":1, "acked-bytes":1080, "cwnd":13880, "inflight":293}
+{"type":"receive", "time":1566536674198, "conn":0, "dcid":"09676c6e664898a4", "scid":"", "len":95, "first-octet":228}
+{"type":"crypto-decrypt", "time":1566536674198, "conn":0, "pn":2, "len":60}
+{"type":"quictrace-recv", "time":1566536674198, "conn":0, "pn":2, "len":60, "encryptionLevel":2}
+{"type":"quictrace-recv-ack", "time":1566536674198, "conn":0, "ack-block-begin":1, "ack-block-end":2}
+{"type":"packet-acked", "time":1566536674198, "conn":0, "pn":2, "newly-acked":1}
+{"type":"stream-acked", "time":1566536674198, "conn":0, "stream-id":-3, "off":1041, "len":253}
+{"type":"quictrace-recv-ack", "time":1566536674198, "conn":0, "ack-delay":0}
+{"type":"quictrace-cc-ack", "time":1566536674198, "conn":0, "min-rtt":1, "smoothed-rtt":1, "latest-rtt":2, "cwnd":14173, "inflight":0}
+{"type":"cc-ack-received", "time":1566536674198, "conn":0, "pn":2, "acked-packets":1, "acked-bytes":293, "cwnd":14173, "inflight":0}
+{"type":"stream-receive", "time":1566536674198, "conn":0, "stream-id":-3, "off":0, "len":52}
+{"type":"crypto-update-secret", "time":1566536674198, "conn":0, "is-enc":0, "epoch":3}
+{"type":"crypto-handshake", "time":1566536674198, "conn":0, "tls-error":0}
+{"type":"send", "time":1566536674198, "conn":0, "state":1}
+{"type":"packet-prepare", "time":1566536674198, "conn":0, "first-octet":224, "dcid":""}
+{"type":"packet-commit", "time":1566536674198, "conn":0, "pn":4, "len":40, "ack-only":1}
+{"type":"quictrace-sent", "time":1566536674198, "conn":0, "pn":4, "len":40, "packet-type":2}
+{"type":"receive", "time":1566536676657, "conn":0, "dcid":"09676c6e664898a4", "len":36, "first-octet":93}
+{"type":"crypto-decrypt", "time":1566536676657, "conn":0, "pn":4, "len":9}
+{"type":"quictrace-recv", "time":1566536676657, "conn":0, "pn":4, "len":9, "encryptionLevel":3}
+{"type":"quictrace-recv-stream", "time":1566536676657, "conn":0, "stream-id":0, "off":0, "len":6, "fin":0}
+{"type":"stream-receive", "time":1566536676657, "conn":0, "stream-id":0, "off":0, "len":6}
+{"type":"send", "time":1566536676657, "conn":0, "state":1}
+{"type":"packet-prepare", "time":1566536676657, "conn":0, "first-octet":64, "dcid":""}
+{"type":"stream-send", "time":1566536676657, "conn":0, "stream-id":0, "off":0, "len":6, "fin":1}
+{"type":"quictrace-send-stream", "time":1566536676657, "conn":0, "stream-id":0, "off":0, "len":6, "fin":1}
+{"type":"packet-commit", "time":1566536676657, "conn":0, "pn":5, "len":33, "ack-only":0}
+{"type":"quictrace-sent", "time":1566536676657, "conn":0, "pn":5, "len":33, "packet-type":3}
+{"type":"send", "time":1566536676684, "conn":0, "state":1}
+{"type":"pto", "time":1566536676684, "conn":0, "inflight":33, "cwnd":14173, "pto-count":1}
+{"type":"stream-lost", "time":1566536676684, "conn":0, "stream-id":0, "off":0, "len":7}
+{"type":"packet-prepare", "time":1566536676684, "conn":0, "first-octet":64, "dcid":""}
+{"type":"stream-send", "time":1566536676684, "conn":0, "stream-id":0, "off":0, "len":6, "fin":1}
+{"type":"quictrace-send-stream", "time":1566536676684, "conn":0, "stream-id":0, "off":0, "len":6, "fin":1}
+{"type":"packet-commit", "time":1566536676684, "conn":0, "pn":6, "len":28, "ack-only":0}
+{"type":"quictrace-sent", "time":1566536676684, "conn":0, "pn":6, "len":28, "packet-type":3}
+{"type":"receive", "time":1566536676685, "conn":0, "dcid":"09676c6e664898a4", "len":32, "first-octet":88}
+{"type":"crypto-decrypt", "time":1566536676685, "conn":0, "pn":5, "len":5}
+{"type":"quictrace-recv", "time":1566536676685, "conn":0, "pn":5, "len":5, "encryptionLevel":3}
+{"type":"quictrace-recv-ack", "time":1566536676685, "conn":0, "ack-block-begin":5, "ack-block-end":5}
+{"type":"packet-acked", "time":1566536676685, "conn":0, "pn":5, "newly-acked":1}
+{"type":"stream-acked", "time":1566536676685, "conn":0, "stream-id":0, "off":0, "len":7}
+{"type":"quictrace-recv-ack", "time":1566536676685, "conn":0, "ack-delay":26}
+{"type":"cc-ack-received", "time":1566536676685, "conn":0, "pn":5, "acked-packets":0, "acked-bytes":0, "cwnd":14173, "inflight":28}
+{"type":"receive", "time":1566536676710, "conn":0, "dcid":"09676c6e664898a4", "len":32, "first-octet":72}
+{"type":"crypto-decrypt", "time":1566536676710, "conn":0, "pn":6, "len":5}
+{"type":"quictrace-recv", "time":1566536676710, "conn":0, "pn":6, "len":5, "encryptionLevel":3}
+{"type":"quictrace-recv-ack", "time":1566536676710, "conn":0, "ack-block-begin":5, "ack-block-end":6}
+{"type":"packet-acked", "time":1566536676710, "conn":0, "pn":6, "newly-acked":1}
+{"type":"stream-acked", "time":1566536676710, "conn":0, "stream-id":0, "off":0, "len":7}
+{"type":"quictrace-recv-ack", "time":1566536676710, "conn":0, "ack-delay":24}
+{"type":"quictrace-cc-ack", "time":1566536676710, "conn":0, "min-rtt":1, "smoothed-rtt":4, "latest-rtt":26, "cwnd":14201, "inflight":0}
+{"type":"cc-ack-received", "time":1566536676710, "conn":0, "pn":6, "acked-packets":1, "acked-bytes":28, "cwnd":14201, "inflight":0}
+{"type":"receive", "time":1566536682350, "conn":0, "dcid":"09676c6e664898a4", "len":39, "first-octet":93}
+{"type":"crypto-decrypt", "time":1566536682350, "conn":0, "pn":7, "len":12}
+{"type":"quictrace-recv", "time":1566536682350, "conn":0, "pn":7, "len":12, "encryptionLevel":3}
+{"type":"quictrace-recv-stream", "time":1566536682350, "conn":0, "stream-id":0, "off":6, "len":8, "fin":0}
+{"type":"stream-receive", "time":1566536682350, "conn":0, "stream-id":0, "off":6, "len":8}
+{"type":"send", "time":1566536682375, "conn":0, "state":1}
+{"type":"packet-prepare", "time":1566536682375, "conn":0, "first-octet":64, "dcid":""}
+{"type":"packet-commit", "time":1566536682375, "conn":0, "pn":7, "len":24, "ack-only":1}
+{"type":"quictrace-sent", "time":1566536682375, "conn":0, "pn":7, "len":24, "packet-type":3}
+{"type":"receive", "time":1566536683766, "conn":0, "dcid":"09676c6e664898a4", "len":39, "first-octet":76}
+{"type":"crypto-decrypt", "time":1566536683766, "conn":0, "pn":8, "len":12}
+{"type":"quictrace-recv", "time":1566536683766, "conn":0, "pn":8, "len":12, "encryptionLevel":3}
+{"type":"quictrace-recv-stream", "time":1566536683766, "conn":0, "stream-id":0, "off":14, "len":8, "fin":0}
+{"type":"stream-receive", "time":1566536683766, "conn":0, "stream-id":0, "off":14, "len":8}
+{"type":"send", "time":1566536683791, "conn":0, "state":1}
+{"type":"packet-prepare", "time":1566536683791, "conn":0, "first-octet":64, "dcid":""}
+{"type":"packet-commit", "time":1566536683791, "conn":0, "pn":8, "len":24, "ack-only":1}
+{"type":"quictrace-sent", "time":1566536683791, "conn":0, "pn":8, "len":24, "packet-type":3}
+{"type":"receive", "time":1566536685095, "conn":0, "dcid":"09676c6e664898a4", "len":38, "first-octet":66}
+{"type":"crypto-decrypt", "time":1566536685095, "conn":0, "pn":9, "len":11}
+{"type":"quictrace-recv", "time":1566536685095, "conn":0, "pn":9, "len":11, "encryptionLevel":3}
+{"type":"quictrace-recv-stream", "time":1566536685095, "conn":0, "stream-id":0, "off":22, "len":7, "fin":0}
+{"type":"stream-receive", "time":1566536685095, "conn":0, "stream-id":0, "off":22, "len":7}
+{"type":"send", "time":1566536685121, "conn":0, "state":1}
+{"type":"packet-prepare", "time":1566536685121, "conn":0, "first-octet":64, "dcid":""}
+{"type":"packet-commit", "time":1566536685121, "conn":0, "pn":9, "len":24, "ack-only":1}
+{"type":"quictrace-sent", "time":1566536685121, "conn":0, "pn":9, "len":24, "packet-type":3}
+{"type":"accept", "time":1566536701848, "conn":1, "dcid":"28a516d1d9ef37f5", "scid":""}
+{"type":"crypto-decrypt", "time":1566536701848, "conn":1, "pn":0, "len":1244}
+{"type":"quictrace-recv", "time":1566536701848, "conn":1, "pn":0, "len":1244, "encryptionLevel":0}
+{"type":"stream-receive", "time":1566536701848, "conn":1, "stream-id":-1, "off":0, "len":268}
+{"type":"crypto-update-secret", "time":1566536701848, "conn":1, "is-enc":1, "epoch":2}
+{"type":"crypto-update-secret", "time":1566536701848, "conn":1, "is-enc":0, "epoch":2}
+{"type":"crypto-update-secret", "time":1566536701848, "conn":1, "is-enc":1, "epoch":3}
+{"type":"crypto-handshake", "time":1566536701848, "conn":1, "tls-error":0}
+{"type":"send", "time":1566536701856, "conn":1, "state":1}
+{"type":"packet-prepare", "time":1566536701856, "conn":1, "first-octet":192, "dcid":""}
+{"type":"stream-send", "time":1566536701856, "conn":1, "stream-id":-1, "off":0, "len":155, "fin":0}
+{"type":"quictrace-send-stream", "time":1566536701856, "conn":1, "stream-id":-1, "off":0, "len":155, "fin":0}
+{"type":"packet-commit", "time":1566536701856, "conn":1, "pn":0, "len":200, "ack-only":0}
+{"type":"quictrace-sent", "time":1566536701856, "conn":1, "pn":0, "len":200, "packet-type":0}
+{"type":"packet-prepare", "time":1566536701856, "conn":1, "first-octet":224, "dcid":""}
+{"type":"stream-send", "time":1566536701856, "conn":1, "stream-id":-3, "off":0, "len":1041, "fin":0}
+{"type":"quictrace-send-stream", "time":1566536701856, "conn":1, "stream-id":-3, "off":0, "len":1041, "fin":0}
+{"type":"packet-commit", "time":1566536701856, "conn":1, "pn":1, "len":1080, "ack-only":0}
+{"type":"quictrace-sent", "time":1566536701856, "conn":1, "pn":1, "len":1280, "packet-type":2}
+{"type":"packet-prepare", "time":1566536701856, "conn":1, "first-octet":224, "dcid":""}
+{"type":"stream-send", "time":1566536701856, "conn":1, "stream-id":-3, "off":1041, "len":253, "fin":0}
+{"type":"quictrace-send-stream", "time":1566536701856, "conn":1, "stream-id":-3, "off":1041, "len":253, "fin":0}
+{"type":"packet-commit", "time":1566536701856, "conn":1, "pn":2, "len":293, "ack-only":0}
+{"type":"quictrace-sent", "time":1566536701856, "conn":1, "pn":2, "len":293, "packet-type":2}
+{"type":"receive", "time":1566536701857, "conn":1, "dcid":"ca500fae314afa6b", "scid":"", "len":40, "first-octet":229}
+{"type":"crypto-decrypt", "time":1566536701857, "conn":1, "pn":1, "len":5}
+{"type":"quictrace-recv", "time":1566536701857, "conn":1, "pn":1, "len":5, "encryptionLevel":2}
+{"type":"stream-lost", "time":1566536701857, "conn":1, "stream-id":-1, "off":0, "len":155}
+{"type":"quictrace-recv-ack", "time":1566536701857, "conn":1, "ack-block-begin":1, "ack-block-end":1}
+{"type":"packet-acked", "time":1566536701857, "conn":1, "pn":1, "newly-acked":1}
+{"type":"stream-acked", "time":1566536701857, "conn":1, "stream-id":-3, "off":0, "len":1041}
+{"type":"quictrace-recv-ack", "time":1566536701857, "conn":1, "ack-delay":0}
+{"type":"quictrace-cc-ack", "time":1566536701857, "conn":1, "min-rtt":1, "smoothed-rtt":1, "latest-rtt":1, "cwnd":13880, "inflight":293}
+{"type":"cc-ack-received", "time":1566536701857, "conn":1, "pn":1, "acked-packets":1, "acked-bytes":1080, "cwnd":13880, "inflight":293}
+{"type":"receive", "time":1566536701857, "conn":1, "dcid":"ca500fae314afa6b", "scid":"", "len":95, "first-octet":239}
+{"type":"crypto-decrypt", "time":1566536701857, "conn":1, "pn":2, "len":60}
+{"type":"quictrace-recv", "time":1566536701857, "conn":1, "pn":2, "len":60, "encryptionLevel":2}
+{"type":"quictrace-recv-ack", "time":1566536701857, "conn":1, "ack-block-begin":1, "ack-block-end":2}
+{"type":"packet-acked", "time":1566536701857, "conn":1, "pn":2, "newly-acked":1}
+{"type":"stream-acked", "time":1566536701857, "conn":1, "stream-id":-3, "off":1041, "len":253}
+{"type":"quictrace-recv-ack", "time":1566536701857, "conn":1, "ack-delay":0}
+{"type":"quictrace-cc-ack", "time":1566536701857, "conn":1, "min-rtt":1, "smoothed-rtt":1, "latest-rtt":1, "cwnd":14173, "inflight":0}
+{"type":"cc-ack-received", "time":1566536701857, "conn":1, "pn":2, "acked-packets":1, "acked-bytes":293, "cwnd":14173, "inflight":0}
+{"type":"stream-receive", "time":1566536701857, "conn":1, "stream-id":-3, "off":0, "len":52}
+{"type":"crypto-update-secret", "time":1566536701857, "conn":1, "is-enc":0, "epoch":3}
+{"type":"crypto-handshake", "time":1566536701857, "conn":1, "tls-error":0}
+{"type":"send", "time":1566536701858, "conn":1, "state":1}
+{"type":"packet-prepare", "time":1566536701858, "conn":1, "first-octet":224, "dcid":""}
+{"type":"packet-commit", "time":1566536701858, "conn":1, "pn":4, "len":40, "ack-only":1}
+{"type":"quictrace-sent", "time":1566536701858, "conn":1, "pn":4, "len":40, "packet-type":2}
+{"type":"receive", "time":1566536703157, "conn":1, "dcid":"ca500fae314afa6b", "len":35, "first-octet":89}
+{"type":"crypto-decrypt", "time":1566536703157, "conn":1, "pn":4, "len":8}
+{"type":"quictrace-recv", "time":1566536703157, "conn":1, "pn":4, "len":8, "encryptionLevel":3}
+{"type":"quictrace-recv-stream", "time":1566536703157, "conn":1, "stream-id":0, "off":0, "len":5, "fin":0}
+{"type":"stream-receive", "time":1566536703157, "conn":1, "stream-id":0, "off":0, "len":5}
+{"type":"send", "time":1566536703157, "conn":1, "state":1}
+{"type":"packet-prepare", "time":1566536703157, "conn":1, "first-octet":64, "dcid":""}
+{"type":"stream-send", "time":1566536703157, "conn":1, "stream-id":0, "off":0, "len":5, "fin":1}
+{"type":"quictrace-send-stream", "time":1566536703157, "conn":1, "stream-id":0, "off":0, "len":5, "fin":1}
+{"type":"packet-commit", "time":1566536703157, "conn":1, "pn":5, "len":32, "ack-only":0}
+{"type":"quictrace-sent", "time":1566536703157, "conn":1, "pn":5, "len":32, "packet-type":3}
+{"type":"send", "time":1566536703184, "conn":1, "state":1}
+{"type":"pto", "time":1566536703184, "conn":1, "inflight":32, "cwnd":14173, "pto-count":1}
+{"type":"stream-lost", "time":1566536703184, "conn":1, "stream-id":0, "off":0, "len":6}
+{"type":"packet-prepare", "time":1566536703184, "conn":1, "first-octet":64, "dcid":""}
+{"type":"stream-send", "time":1566536703184, "conn":1, "stream-id":0, "off":0, "len":5, "fin":1}
+{"type":"quictrace-send-stream", "time":1566536703184, "conn":1, "stream-id":0, "off":0, "len":5, "fin":1}
+{"type":"packet-commit", "time":1566536703184, "conn":1, "pn":6, "len":27, "ack-only":0}
+{"type":"quictrace-sent", "time":1566536703184, "conn":1, "pn":6, "len":27, "packet-type":3}
+{"type":"receive", "time":1566536703184, "conn":1, "dcid":"ca500fae314afa6b", "len":32, "first-octet":92}
+{"type":"crypto-decrypt", "time":1566536703184, "conn":1, "pn":5, "len":5}
+{"type":"quictrace-recv", "time":1566536703184, "conn":1, "pn":5, "len":5, "encryptionLevel":3}
+{"type":"quictrace-recv-ack", "time":1566536703184, "conn":1, "ack-block-begin":5, "ack-block-end":5}
+{"type":"packet-acked", "time":1566536703184, "conn":1, "pn":5, "newly-acked":1}
+{"type":"stream-acked", "time":1566536703184, "conn":1, "stream-id":0, "off":0, "len":6}
+{"type":"quictrace-recv-ack", "time":1566536703184, "conn":1, "ack-delay":25}
+{"type":"cc-ack-received", "time":1566536703184, "conn":1, "pn":5, "acked-packets":0, "acked-bytes":0, "cwnd":14173, "inflight":27}
+{"type":"receive", "time":1566536703210, "conn":1, "dcid":"ca500fae314afa6b", "len":32, "first-octet":87}
+{"type":"crypto-decrypt", "time":1566536703210, "conn":1, "pn":6, "len":5}
+{"type":"quictrace-recv", "time":1566536703210, "conn":1, "pn":6, "len":5, "encryptionLevel":3}
+{"type":"quictrace-recv-ack", "time":1566536703210, "conn":1, "ack-block-begin":5, "ack-block-end":6}
+{"type":"packet-acked", "time":1566536703210, "conn":1, "pn":6, "newly-acked":1}
+{"type":"stream-acked", "time":1566536703210, "conn":1, "stream-id":0, "off":0, "len":6}
+{"type":"quictrace-recv-ack", "time":1566536703210, "conn":1, "ack-delay":25}
+{"type":"quictrace-cc-ack", "time":1566536703210, "conn":1, "min-rtt":1, "smoothed-rtt":4, "latest-rtt":26, "cwnd":14200, "inflight":0}
+{"type":"cc-ack-received", "time":1566536703210, "conn":1, "pn":6, "acked-packets":1, "acked-bytes":27, "cwnd":14200, "inflight":0}
+{"type":"receive", "time":1566536711486, "conn":1, "dcid":"ca500fae314afa6b", "len":37, "first-octet":72}
+{"type":"crypto-decrypt", "time":1566536711486, "conn":1, "pn":7, "len":10}
+{"type":"quictrace-recv", "time":1566536711486, "conn":1, "pn":7, "len":10, "encryptionLevel":3}
+{"type":"quictrace-recv-stream", "time":1566536711486, "conn":1, "stream-id":0, "off":5, "len":6, "fin":0}
+{"type":"stream-receive", "time":1566536711486, "conn":1, "stream-id":0, "off":5, "len":6}
+{"type":"send", "time":1566536711512, "conn":1, "state":1}
+{"type":"packet-prepare", "time":1566536711512, "conn":1, "first-octet":64, "dcid":""}
+{"type":"packet-commit", "time":1566536711512, "conn":1, "pn":7, "len":24, "ack-only":1}
+{"type":"quictrace-sent", "time":1566536711512, "conn":1, "pn":7, "len":24, "packet-type":3}
+{"type":"receive", "time":1566536712752, "conn":1, "dcid":"ca500fae314afa6b", "len":39, "first-octet":79}
+{"type":"crypto-decrypt", "time":1566536712752, "conn":1, "pn":8, "len":12}
+{"type":"quictrace-recv", "time":1566536712752, "conn":1, "pn":8, "len":12, "encryptionLevel":3}
+{"type":"quictrace-recv-stream", "time":1566536712752, "conn":1, "stream-id":0, "off":11, "len":8, "fin":0}
+{"type":"stream-receive", "time":1566536712752, "conn":1, "stream-id":0, "off":11, "len":8}
+{"type":"send", "time":1566536712777, "conn":1, "state":1}
+{"type":"packet-prepare", "time":1566536712777, "conn":1, "first-octet":64, "dcid":""}
+{"type":"packet-commit", "time":1566536712777, "conn":1, "pn":8, "len":24, "ack-only":1}
+{"type":"quictrace-sent", "time":1566536712777, "conn":1, "pn":8, "len":24, "packet-type":3}
+{"type":"receive", "time":1566536713807, "conn":1, "dcid":"ca500fae314afa6b", "len":34, "first-octet":80}
+{"type":"crypto-decrypt", "time":1566536713807, "conn":1, "pn":9, "len":7}
+{"type":"quictrace-recv", "time":1566536713807, "conn":1, "pn":9, "len":7, "encryptionLevel":3}
+{"type":"quictrace-recv-stream", "time":1566536713807, "conn":1, "stream-id":0, "off":19, "len":3, "fin":0}
+{"type":"stream-receive", "time":1566536713807, "conn":1, "stream-id":0, "off":19, "len":3}
+{"type":"send", "time":1566536713832, "conn":1, "state":1}
+{"type":"packet-prepare", "time":1566536713832, "conn":1, "first-octet":64, "dcid":""}
+{"type":"packet-commit", "time":1566536713832, "conn":1, "pn":9, "len":24, "ack-only":1}
+{"type":"quictrace-sent", "time":1566536713832, "conn":1, "pn":9, "len":24, "packet-type":3}
+{"type":"receive", "time":1566536714930, "conn":1, "dcid":"ca500fae314afa6b", "len":36, "first-octet":70}
+{"type":"crypto-decrypt", "time":1566536714930, "conn":1, "pn":10, "len":9}
+{"type":"quictrace-recv", "time":1566536714930, "conn":1, "pn":10, "len":9, "encryptionLevel":3}
+{"type":"quictrace-recv-stream", "time":1566536714930, "conn":1, "stream-id":0, "off":22, "len":5, "fin":0}
+{"type":"stream-receive", "time":1566536714930, "conn":1, "stream-id":0, "off":22, "len":5}
+{"type":"send", "time":1566536714956, "conn":1, "state":1}
+{"type":"packet-prepare", "time":1566536714956, "conn":1, "first-octet":64, "dcid":""}
+{"type":"packet-commit", "time":1566536714956, "conn":1, "pn":10, "len":24, "ack-only":1}
+{"type":"quictrace-sent", "time":1566536714956, "conn":1, "pn":10, "len":24, "packet-type":3}
+{"type":"send", "time":1566536715121, "conn":0, "state":1}
+{"type":"idle-timeout", "time":1566536715121, "conn":0}
+{"type":"free", "time":1566536715121, "conn":0}
+{"type":"receive", "time":1566536716634, "conn":1, "dcid":"ca500fae314afa6b", "len":34, "first-octet":80}
+{"type":"crypto-decrypt", "time":1566536716634, "conn":1, "pn":11, "len":7}
+{"type":"quictrace-recv", "time":1566536716634, "conn":1, "pn":11, "len":7, "encryptionLevel":3}
+{"type":"quictrace-recv-stream", "time":1566536716634, "conn":1, "stream-id":0, "off":27, "len":3, "fin":0}
+{"type":"stream-receive", "time":1566536716634, "conn":1, "stream-id":0, "off":27, "len":3}
+{"type":"send", "time":1566536716660, "conn":1, "state":1}
+{"type":"packet-prepare", "time":1566536716660, "conn":1, "first-octet":64, "dcid":""}
+{"type":"packet-commit", "time":1566536716660, "conn":1, "pn":11, "len":24, "ack-only":1}
+{"type":"quictrace-sent", "time":1566536716660, "conn":1, "pn":11, "len":24, "packet-type":3}
+{"type":"send", "time":1566536746660, "conn":1, "state":1}
+{"type":"idle-timeout", "time":1566536746660, "conn":1}
+{"type":"free", "time":1566536746660, "conn":1}
+{"type":"accept", "time":1566536752858, "conn":2, "dcid":"3f30fbbda33ecf72", "scid":""}
+{"type":"crypto-decrypt", "time":1566536752858, "conn":2, "pn":0, "len":1244}
+{"type":"quictrace-recv", "time":1566536752858, "conn":2, "pn":0, "len":1244, "encryptionLevel":0}
+{"type":"stream-receive", "time":1566536752858, "conn":2, "stream-id":-1, "off":0, "len":268}
+{"type":"crypto-update-secret", "time":1566536752858, "conn":2, "is-enc":1, "epoch":2}
+{"type":"crypto-update-secret", "time":1566536752858, "conn":2, "is-enc":0, "epoch":2}
+{"type":"crypto-update-secret", "time":1566536752858, "conn":2, "is-enc":1, "epoch":3}
+{"type":"crypto-handshake", "time":1566536752858, "conn":2, "tls-error":0}
+{"type":"send", "time":1566536752949, "conn":2, "state":1}
+{"type":"packet-prepare", "time":1566536752949, "conn":2, "first-octet":192, "dcid":""}
+{"type":"stream-send", "time":1566536752949, "conn":2, "stream-id":-1, "off":0, "len":155, "fin":0}
+{"type":"quictrace-send-stream", "time":1566536752949, "conn":2, "stream-id":-1, "off":0, "len":155, "fin":0}
+{"type":"packet-commit", "time":1566536752949, "conn":2, "pn":0, "len":201, "ack-only":0}
+{"type":"quictrace-sent", "time":1566536752949, "conn":2, "pn":0, "len":201, "packet-type":0}
+{"type":"packet-prepare", "time":1566536752949, "conn":2, "first-octet":224, "dcid":""}
+{"type":"stream-send", "time":1566536752949, "conn":2, "stream-id":-3, "off":0, "len":1040, "fin":0}
+{"type":"quictrace-send-stream", "time":1566536752949, "conn":2, "stream-id":-3, "off":0, "len":1040, "fin":0}
+{"type":"packet-commit", "time":1566536752949, "conn":2, "pn":1, "len":1079, "ack-only":0}
+{"type":"quictrace-sent", "time":1566536752949, "conn":2, "pn":1, "len":1280, "packet-type":2}
+{"type":"packet-prepare", "time":1566536752949, "conn":2, "first-octet":224, "dcid":""}
+{"type":"stream-send", "time":1566536752949, "conn":2, "stream-id":-3, "off":1040, "len":254, "fin":0}
+{"type":"quictrace-send-stream", "time":1566536752949, "conn":2, "stream-id":-3, "off":1040, "len":254, "fin":0}
+{"type":"packet-commit", "time":1566536752949, "conn":2, "pn":2, "len":294, "ack-only":0}
+{"type":"quictrace-sent", "time":1566536752949, "conn":2, "pn":2, "len":294, "packet-type":2}
+{"type":"receive", "time":1566536752950, "conn":2, "dcid":"45524b9dc6f873ed", "scid":"", "len":40, "first-octet":229}
+{"type":"crypto-decrypt", "time":1566536752950, "conn":2, "pn":1, "len":5}
+{"type":"quictrace-recv", "time":1566536752950, "conn":2, "pn":1, "len":5, "encryptionLevel":2}
+{"type":"stream-lost", "time":1566536752950, "conn":2, "stream-id":-1, "off":0, "len":155}
+{"type":"quictrace-recv-ack", "time":1566536752950, "conn":2, "ack-block-begin":1, "ack-block-end":1}
+{"type":"packet-acked", "time":1566536752950, "conn":2, "pn":1, "newly-acked":1}
+{"type":"stream-acked", "time":1566536752950, "conn":2, "stream-id":-3, "off":0, "len":1040}
+{"type":"quictrace-recv-ack", "time":1566536752950, "conn":2, "ack-delay":0}
+{"type":"quictrace-cc-ack", "time":1566536752950, "conn":2, "min-rtt":1, "smoothed-rtt":1, "latest-rtt":1, "cwnd":13879, "inflight":294}
+{"type":"cc-ack-received", "time":1566536752950, "conn":2, "pn":1, "acked-packets":1, "acked-bytes":1079, "cwnd":13879, "inflight":294}
+{"type":"receive", "time":1566536752950, "conn":2, "dcid":"45524b9dc6f873ed", "scid":"", "len":95, "first-octet":226}
+{"type":"crypto-decrypt", "time":1566536752950, "conn":2, "pn":2, "len":60}
+{"type":"quictrace-recv", "time":1566536752950, "conn":2, "pn":2, "len":60, "encryptionLevel":2}
+{"type":"quictrace-recv-ack", "time":1566536752950, "conn":2, "ack-block-begin":1, "ack-block-end":2}
+{"type":"packet-acked", "time":1566536752950, "conn":2, "pn":2, "newly-acked":1}
+{"type":"stream-acked", "time":1566536752950, "conn":2, "stream-id":-3, "off":1040, "len":254}
+{"type":"quictrace-recv-ack", "time":1566536752950, "conn":2, "ack-delay":0}
+{"type":"quictrace-cc-ack", "time":1566536752950, "conn":2, "min-rtt":1, "smoothed-rtt":1, "latest-rtt":1, "cwnd":14173, "inflight":0}
+{"type":"cc-ack-received", "time":1566536752950, "conn":2, "pn":2, "acked-packets":1, "acked-bytes":294, "cwnd":14173, "inflight":0}
+{"type":"stream-receive", "time":1566536752950, "conn":2, "stream-id":-3, "off":0, "len":52}
+{"type":"crypto-update-secret", "time":1566536752950, "conn":2, "is-enc":0, "epoch":3}
+{"type":"crypto-handshake", "time":1566536752950, "conn":2, "tls-error":0}
+{"type":"send", "time":1566536752951, "conn":2, "state":1}
+{"type":"packet-prepare", "time":1566536752951, "conn":2, "first-octet":224, "dcid":""}
+{"type":"packet-commit", "time":1566536752951, "conn":2, "pn":4, "len":40, "ack-only":1}
+{"type":"quictrace-sent", "time":1566536752951, "conn":2, "pn":4, "len":40, "packet-type":2}
+{"type":"receive", "time":1566536754374, "conn":2, "dcid":"45524b9dc6f873ed", "len":38, "first-octet":91}
+{"type":"crypto-decrypt", "time":1566536754374, "conn":2, "pn":4, "len":11}
+{"type":"quictrace-recv", "time":1566536754374, "conn":2, "pn":4, "len":11, "encryptionLevel":3}
+{"type":"quictrace-recv-stream", "time":1566536754374, "conn":2, "stream-id":0, "off":0, "len":8, "fin":0}
+{"type":"stream-receive", "time":1566536754374, "conn":2, "stream-id":0, "off":0, "len":8}
+{"type":"send", "time":1566536754375, "conn":2, "state":1}
+{"type":"packet-prepare", "time":1566536754375, "conn":2, "first-octet":64, "dcid":""}
+{"type":"stream-send", "time":1566536754375, "conn":2, "stream-id":0, "off":0, "len":8, "fin":1}
+{"type":"quictrace-send-stream", "time":1566536754375, "conn":2, "stream-id":0, "off":0, "len":8, "fin":1}
+{"type":"packet-commit", "time":1566536754375, "conn":2, "pn":5, "len":35, "ack-only":0}
+{"type":"quictrace-sent", "time":1566536754375, "conn":2, "pn":5, "len":35, "packet-type":3}
+{"type":"receive", "time":1566536754400, "conn":2, "dcid":"45524b9dc6f873ed", "len":32, "first-octet":74}
+{"type":"crypto-decrypt", "time":1566536754400, "conn":2, "pn":5, "len":5}
+{"type":"quictrace-recv", "time":1566536754400, "conn":2, "pn":5, "len":5, "encryptionLevel":3}
+{"type":"quictrace-recv-ack", "time":1566536754400, "conn":2, "ack-block-begin":5, "ack-block-end":5}
+{"type":"packet-acked", "time":1566536754400, "conn":2, "pn":5, "newly-acked":1}
+{"type":"stream-acked", "time":1566536754400, "conn":2, "stream-id":0, "off":0, "len":9}
+{"type":"quictrace-recv-ack", "time":1566536754400, "conn":2, "ack-delay":24}
+{"type":"quictrace-cc-ack", "time":1566536754400, "conn":2, "min-rtt":1, "smoothed-rtt":4, "latest-rtt":25, "cwnd":14208, "inflight":0}
+{"type":"cc-ack-received", "time":1566536754400, "conn":2, "pn":5, "acked-packets":1, "acked-bytes":35, "cwnd":14208, "inflight":0}
+{"type":"send", "time":1566536784401, "conn":2, "state":1}
+{"type":"idle-timeout", "time":1566536784401, "conn":2}
+{"type":"free", "time":1566536784401, "conn":2}

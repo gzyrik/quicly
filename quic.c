@@ -301,24 +301,22 @@ static quiconn_t add_conn(quicly_conn_t *conn)
 }
 static quicly_stream_t* get_strm(quiconn_t connId, quicstm_t strmId)
 {
-    if (_conns[connId])
+    if (connId < QUIC_MAX_CONN && _conns[connId])
         return quicly_get_stream(_conns[connId], strmId);
     return NULL;
 }
 int64_t quic_timeout_ms (quiconn_t connId[], size_t num_id)
 {
     size_t i;
-    int64_t conn_timeout, first_timeout = INT64_MAX, now = _ctx.now->cb(_ctx.now);
-    for (i=0; i<num_id && connId[i]; ++i) {
-        conn_timeout = quicly_get_first_timeout(_conns[connId[i]]);
-        if (conn_timeout < first_timeout)
+    int64_t first_timeout = INT64_MAX, now = _ctx.now->cb(_ctx.now);
+    for (i=0; i<num_id && connId[i] && connId[i] < QUIC_MAX_CONN; ++i) {
+        int64_t conn_timeout = quicly_get_first_timeout(_conns[connId[i]]) - now;
+        if (conn_timeout <= 0) return 0;
+        else if (conn_timeout <= first_timeout)
             first_timeout = conn_timeout;
     }
-    if (now >= first_timeout)
-        return 0;
-    first_timeout -= now;
     if (first_timeout > _ctx.transport_params.idle_timeout)
-        return _ctx.transport_params.idle_timeout;
+        first_timeout = _ctx.transport_params.idle_timeout;
     return first_timeout;
 }
 static socklen_t socklen(const struct sockaddr* addr)
@@ -416,7 +414,7 @@ int quic_decode (quicpkt_t *pkt, quicbuf_t *buf, const struct sockaddr* addr)
     return (int)ret;
 }
 
-int quic_receive(quiconn_t connId, const quicpkt_t *pkt)
+int quic_received(quiconn_t connId, const quicpkt_t *pkt)
 {
     QUICLY_BUILD_ASSERT(sizeof(quicpkt_t) >= sizeof(quicly_decoded_packet_t));
     return quicly_receive(_conns[connId], (quicly_decoded_packet_t*)pkt);

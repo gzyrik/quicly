@@ -17,7 +17,7 @@
 /*
  * Manage Base64 encoding.
  */
-#ifdef _WINDOWS
+#ifdef _WIN32
 #include "wincompat.h"
 #else
 #include <sys/time.h>

@@ -442,7 +442,7 @@ int quic_egress_write (quiconn_t connId, quicstm_t strmId, const quicbuf_t *buf)
     if (!quicly_sendstate_is_open(&stream->sendstate)) return -1;
     return quicly_streambuf_egress_write(stream, buf->base, buf->len);
 }
-#ifdef _WINDOWS
+#ifdef _WIN32
 static int pread(unsigned int fd, char *buf, size_t count, int offset)
 { 
     if (_lseek(fd, offset, SEEK_SET) != offset)
@@ -476,7 +476,7 @@ int quic_egress_sendf(quiconn_t connId, quicstm_t strmId, const char *filename)
 
     if ((fd = open(filename, O_RDONLY)) == -1)
         return 0;
-#ifdef _WINDOWS
+#ifdef _WIN32
     len = _filelengthi64(fd);
 #else
     struct stat st;

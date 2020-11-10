@@ -22,7 +22,7 @@
 #ifndef quicly_h
 #define quicly_h
 
-#ifdef _WINDOWS
+#ifdef _WIN32
 #include <ws2tcpip.h>
 #else
 #include <sys/socket.h>

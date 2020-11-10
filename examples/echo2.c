@@ -11,7 +11,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "../quic.h"
-#ifdef _WINDOWS
+#ifdef _WIN32
 #include <ws2tcpip.h>
 typedef HANDLE pthread_t;
 #else
@@ -335,7 +335,7 @@ int main(int argc, char **argv)
     const char* host;
     pthread_t thread;
     struct sockaddr_storage sa={0};
-#ifdef _WINDOWS
+#ifdef _WIN32
     WSADATA wsd;
     WSAStartup(MAKEWORD(2, 2), &wsd);
 #endif
@@ -389,7 +389,7 @@ int main(int argc, char **argv)
         if (getsockname(fd, (struct sockaddr *)&sa, &salen) != 0)
             PANIC("getsockname:%s\n", strerror(errno));
 
-#ifdef _WINDOWS
+#ifdef _WIN32
         thread = (pthread_t)_beginthreadex (NULL, 0, forward_stdin, &sa, 0 , NULL);
 #else
         pthread_create (&thread, NULL, forward_stdin, &sa);

@@ -21,7 +21,7 @@
  */
 #ifndef picotls_h
 #define picotls_h
-#ifdef _WINDOWS
+#ifdef _WIN32
 #include "wincompat.h"
 #endif
 #ifdef __cplusplus

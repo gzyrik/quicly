@@ -21,7 +21,7 @@
  */
 #include <assert.h>
 #include <inttypes.h>
-#ifndef _WINDOWS
+#ifndef _WIN32
 #include <netinet/in.h>
 #include <pthread.h>
 #include <sys/time.h>

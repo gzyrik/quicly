@@ -19,10 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\deps\picotls\lib\openssl.c" />
-    <ClCompile Include="..\deps\picotls\lib\pembase64.c" />
-    <ClCompile Include="..\deps\picotls\lib\picotls.c" />
-    <ClCompile Include="..\deps\picotls\picotlsvs\picotls\wintimeofday.c" />
+    <ClCompile Include="..\deps\openssl.c" />
+    <ClCompile Include="..\deps\pembase64.c" />
+    <ClCompile Include="..\deps\picotls.c" />
+    <ClCompile Include="..\deps\wintimeofday.c" />
     <ClCompile Include="..\lib\cc-reno.c" />
     <ClCompile Include="..\lib\defaults.c" />
     <ClCompile Include="..\lib\frame.c" />
@@ -98,7 +98,7 @@
       </PrecompiledHeader>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_WINDOWS;PICOTLS_USE_OPENSSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\deps\klib;$(ProjectDir)..\deps\picotls\include;$(ProjectDir)..\include;$(SolutionDir)..\openssl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\deps\;$(ProjectDir)..\include;$(SolutionDir)..\openssl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <ModuleDefinitionFile>quic.def</ModuleDefinitionFile>
